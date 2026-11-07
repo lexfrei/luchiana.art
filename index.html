@@ -44,10 +44,33 @@
       margin-left: 0.25em; /* optically recenters letter-spaced text */
     }
     .roles {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4em 1.4em;
+      max-width: 100%;
+      overflow: hidden;
+      list-style: none;
       color: var(--secondary);
       font-size: clamp(0.9rem, 3vw, 1.25rem);
       letter-spacing: 0.15em;
       margin-top: 1.25rem;
+    }
+    .roles li {
+      position: relative;
+      flex-grow: 1; /* Full rows keep leading separators outside the clip. */
+      white-space: nowrap;
+    }
+    .roles li::before {
+      content: "·" / "";
+      position: absolute;
+      left: -1.2em;
+      width: 1em;
+    }
+    .fox {
+      color: var(--accent);
+      font: 0.85rem/1.2 ui-monospace, monospace;
+      text-align: left;
+      margin-top: 2rem;
     }
     hr {
       border: none;
@@ -68,7 +91,21 @@
 <body>
   <main>
     <h1>Luchiana</h1>
-    <p class="roles">DJ · Composer · Sound Designer · Photographer</p>
+    <ul class="roles" role="list">
+      <li>DJ</li>
+      <li>Composer</li>
+      <li>Sound Designer</li>
+      <li>Photographer</li>
+    </ul>
+    <pre class="fox" aria-hidden="true"> /\   /\
+//\\_//\\
+\_     _/     __
+ / o o \    /   \
+ \&gt; Y &lt;/   / /\  \
+  / - \___/ /  \_/
+ /         /
+ | | | |  /
+ (_|_|_)_/</pre>
     <hr>
   </main>
   <footer>&copy; 2026 Luchiana</footer>

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<meta charset="utf-8">
+<title>Landing page layout checks</title>
+<pre id="result">Running...</pre>
+<iframe id="page" title="Landing page preview" src="../index.html" style="height: 700px; border: 0"></iframe>
+<script>
+  const page = document.querySelector('#page');
+  const result = document.querySelector('#result');
+  const assert = (condition, message) => { if (!condition) throw new Error(message); };
+
+  page.onload = () => {
+    try {
+      const doc = page.contentDocument;
+      const win = page.contentWindow;
+      const roles = doc.querySelector('.roles');
+      const items = [...roles.querySelectorAll('li')];
+      assert(items.map(item => item.textContent).join('|') === 'DJ|Composer|Sound Designer|Photographer', 'Each role must be a separate list item');
+      const fox = doc.querySelector('.fox');
+      assert(fox?.getAttribute('aria-hidden') === 'true' && /^[\x00-\x7F]+$/.test(fox.textContent), 'Fox must be decorative ASCII');
+
+      for (const width of [320, 375, 768, 1280]) {
+        page.style.width = `${width}px`;
+        const bounds = roles.getBoundingClientRect();
+        assert(doc.documentElement.scrollWidth <= width, `Page overflows at ${width}px`);
+        assert(win.getComputedStyle(roles).overflowX === 'hidden', 'Row-edge separators must be clipped');
+        let previous;
+        for (const item of items) {
+          const box = item.getBoundingClientRect();
+          const separator = win.getComputedStyle(item, '::before');
+          const left = box.left + parseFloat(separator.left);
+          const right = left + parseFloat(separator.width);
+          const firstInRow = !previous || Math.abs(previous.top - box.top) > 1;
+          assert(separator.content.includes('·'), 'Missing role separator');
+          assert(win.getComputedStyle(item).whiteSpace === 'nowrap', 'Role names must not split');
+          assert(firstInRow ? right <= bounds.left + 1 : left >= previous.right - 1 && right <= box.left, `Separator escapes its gap at ${width}px`);
+          previous = box;
+        }
+      }
+      result.textContent = 'PASS: ASCII fox and role separators at 320, 375, 768 and 1280px';
+    } catch (error) {
+      result.textContent = `FAIL: ${error.message}`;
+      throw error;
+    } finally {
+      page.style.width = '100%';
+    }
+  };
+</script>
+</html>
