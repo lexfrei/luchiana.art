@@ -18,6 +18,7 @@
       assert(items.map(item => item.textContent).join('|') === 'DJ|Composer|Sound Designer|Photographer', 'Each role must be a separate list item');
       const fox = doc.querySelector('.fox');
       assert(fox?.getAttribute('aria-hidden') === 'true' && /^[\x00-\x7F]+$/.test(fox.textContent), 'Fox must be decorative ASCII');
+      assert(fox.textContent.trimEnd().endsWith(' | | |    /\n (_|_)___/'), 'Fox must have two front paws');
       const profiles = new Map([
         ['500px', 'https://500px.com/p/Eternal_soul'],
         ['Instagram', 'https://www.instagram.com/luchiana_solovieva/'],
