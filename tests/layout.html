@@ -15,7 +15,7 @@
       const win = page.contentWindow;
       const roles = doc.querySelector('.roles');
       const items = [...roles.querySelectorAll('li')];
-      assert(items.map(item => item.textContent).join('|') === 'DJ|Composer|Sound Designer|Photographer', 'Each role must be a separate list item');
+      assert(items.map(item => item.textContent).join('|') === 'Sound Designer|Composer|DJ|Photographer', 'Incorrect role order');
       const fox = doc.querySelector('.fox');
       assert(fox?.getAttribute('aria-hidden') === 'true' && /^[\x00-\x7F]+$/.test(fox.textContent), 'Fox must be decorative ASCII');
       assert(fox.textContent.trimEnd().endsWith(' | | |    /\n (_|_)___/'), 'Fox must have two front paws');
