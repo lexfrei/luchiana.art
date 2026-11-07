@@ -18,11 +18,30 @@
       assert(items.map(item => item.textContent).join('|') === 'DJ|Composer|Sound Designer|Photographer', 'Each role must be a separate list item');
       const fox = doc.querySelector('.fox');
       assert(fox?.getAttribute('aria-hidden') === 'true' && /^[\x00-\x7F]+$/.test(fox.textContent), 'Fox must be decorative ASCII');
+      const profiles = new Map([
+        ['500px', 'https://500px.com/p/Eternal_soul'],
+        ['Instagram', 'https://www.instagram.com/luchiana_solovieva/'],
+        ['SoundCloud', 'https://soundcloud.com/luchiana-solovieva'],
+        ['Bandcamp', 'https://luchiana.bandcamp.com/'],
+      ]);
+      const socialLinks = [...doc.querySelectorAll('.socials a')];
+      assert(socialLinks.length === profiles.size, 'All social profiles must have a link');
+      assert(doc.querySelector('nav.socials')?.getAttribute('aria-label') === 'Social profiles', 'Social links must have a named navigation landmark');
+      for (const [index, [name, url]] of [...profiles].entries()) {
+        const link = socialLinks[index];
+        assert(link.getAttribute('aria-label') === name && link.href === url, `Incorrect social link: ${name}`);
+        const icon = link.querySelector('svg');
+        assert(icon?.getAttribute('aria-hidden') === 'true' && icon.querySelector('path')?.getAttribute('d'), `${name} must have a decorative inline SVG`);
+      }
 
       for (const width of [320, 375, 768, 1280]) {
         page.style.width = `${width}px`;
         const bounds = roles.getBoundingClientRect();
         assert(doc.documentElement.scrollWidth <= width, `Page overflows at ${width}px`);
+        for (const link of socialLinks) {
+          const box = link.getBoundingClientRect();
+          assert(box.width >= 44 && box.height >= 44, `Social link is too small at ${width}px`);
+        }
         assert(win.getComputedStyle(roles).overflowX === 'hidden', 'Row-edge separators must be clipped');
         let previous;
         for (const item of items) {
@@ -37,7 +56,7 @@
           previous = box;
         }
       }
-      result.textContent = 'PASS: ASCII fox and role separators at 320, 375, 768 and 1280px';
+      result.textContent = 'PASS: social links, ASCII fox and role separators at 320, 375, 768 and 1280px';
     } catch (error) {
       result.textContent = `FAIL: ${error.message}`;
       throw error;
