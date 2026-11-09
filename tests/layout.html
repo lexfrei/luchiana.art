@@ -9,10 +9,11 @@
   const result = document.querySelector('#result');
   const assert = (condition, message) => { if (!condition) throw new Error(message); };
 
-  page.onload = () => {
+  page.onload = async () => {
     try {
       const doc = page.contentDocument;
       const win = page.contentWindow;
+      await doc.fonts.ready;
       const roles = doc.querySelector('.roles');
       const items = [...roles.querySelectorAll('li')];
       assert(items.map(item => item.textContent).join('|') === 'Sound Designer|Composer|DJ|Photographer', 'Incorrect role order');
